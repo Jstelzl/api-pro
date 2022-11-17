@@ -12,20 +12,20 @@ const UserSchema = new Schema(
             type: String,
             require: 'Must have an email!',
             unique: true,
-            match: [/.+@.+\..+/]
+            match: [/.+@.+\..+/],
         },
         thoughts: [
             {
                 type: Schema.Types.ObjectId,
                 ref: 'Thought'
-            }
+            },
         ],
         friends: [
             {
                 type: Schema.Types.ObjectId,
-                ref: 'User'
-            }
-        ]
+                ref: 'User',
+            },
+        ],
 
         
     },
