@@ -98,16 +98,3 @@ const thoughtController = {
 };
 
 module.exports = thoughtController;
-// const thoughtController = {
-//     createNewThought({ params, body }, res) {
-//         console.log(body);
-//         Thought.create(body)
-//           .then(({ _id }) => {
-//             return Thought.findOneAndCreate(
-//                 { _id: params.thoughtsId },
-//                 { $push: { comments: _id } },
-//                 { new: true }
-//             )
-//         })
-//     }
-// };
