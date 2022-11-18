@@ -46,9 +46,9 @@ const thoughtController = {
     createNewThought({ body }, res) {
         console.log("Route hit ======");
         Thought.create(body)
-            .then(({ dbThoughtData }) => {
+            .then(( dbThoughtData ) => {
                 return User.findOneAndUpdate(
-                    { _id: body.userId },
+                    { username: body.userName },
                     { $push: { thoughts: dbThoughtData._id } },
                     { new: true }
                 );
