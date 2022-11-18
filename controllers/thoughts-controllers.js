@@ -3,13 +3,8 @@ const { Thought, Reaction, User } = require('../models');
 const thoughtController = {
 
     getAllThoughts(req, res) {
-        Thought.find({})
-            .populate({
-                path: 'thoughts',
-                select: '-__v'
-            })
+        Thought.find()
             .select('-__v')
-            .sort({ id: -1 })
             .then(dbThoughtData => res.json(dbThoughtData))
             .catch(err => {
                 console.log(err);
@@ -51,15 +46,15 @@ const thoughtController = {
     createNewThought({ body }, res) {
         console.log("Route hit ======");
         Thought.create(body)
-            .then(({ _id }) => {
+            .then(({ dbThoughtData }) => {
                 return User.findOneAndUpdate(
                     { _id: body.userId },
-                    { $push: { thoughts: _id } },
+                    { $push: { thoughts: dbThoughtData._id } },
                     { new: true }
                 );
             })
-            .then(dbThoughtData => res.json(dbThoughtData))
-            .catch(err => res.json(err));
+            .then((dbThoughtData) => res.json(dbThoughtData))
+            .catch((err) => res.json(err));
     },
 
     updateThought({ params, body }, res) {
