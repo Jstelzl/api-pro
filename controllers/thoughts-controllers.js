@@ -1,4 +1,4 @@
-const { Thought, Reaction, User } = require('../models');
+const { Thought, User } = require('../models');
 
 const thoughtController = {
 
@@ -14,16 +14,14 @@ const thoughtController = {
 
     getThoughtById({ params }, res) {
         Thought.findOne({ _id: params.id })
-            .populate({
-                path: 'thoughts',
-                select: '-__v'
+            .then(dbUserData => {
+                if (!dbUserData) {
+                    res.status(404).json({ message: 'No user found with this id!' });
+                    return;
+                }
+                res.json(dbUserData);
             })
-            .select('-__v')
-            .then(dbThoughtData => res.json(dbThoughtData))
-            .catch(err => {
-                console.log(err);
-                res.sendStatus(404);
-            });
+            .catch(err => res.json(err));
     },
 
     // Create Reaction controller here
@@ -46,7 +44,7 @@ const thoughtController = {
     createNewThought({ body }, res) {
         console.log("Route hit ======");
         Thought.create(body)
-            .then(( dbThoughtData ) => {
+            .then((dbThoughtData) => {
                 return User.findOneAndUpdate(
                     { username: body.userName },
                     { $push: { thoughts: dbThoughtData._id } },
@@ -73,16 +71,18 @@ const thoughtController = {
     },
 
     deleteThought({ params }, res) {
-        Thought.findOneAndDelete({ _id: params.id })
+        Thought.findOneAndDelete(
+            { _id: params.id }
+        )
             .then(dbThoughtData => res.json(dbThoughtData))
             .catch(err => res.json(err));
     },
 
-    // Delete reaction controller here
+    //Delete reaction controller here
     deleteReaction({ params }, res) {
         Thought.findOneAndUpdate(
-            { _id: params.userId },
-            { $pull: { replies: { thoughtId: params.thoughtId } } },
+            { _id: params.thoughtId },
+            { $pull: { reactions: { reactionId: params.reactionId } } },
             { new: true }
         )
             .then(dbThoughtData => res.json(dbThoughtData))
