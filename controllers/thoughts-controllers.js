@@ -42,7 +42,6 @@ const thoughtController = {
     },
 
     createNewThought({ body }, res) {
-        console.log("Route hit ======");
         Thought.create(body)
             .then((dbThoughtData) => {
                 return User.findOneAndUpdate(

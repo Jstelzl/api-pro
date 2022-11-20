@@ -52,18 +52,20 @@ const userController = {
             .catch(err => res.json(err));
     },
 
-    createNewFriend({ params }, res) {
-        User.create(body)
-            .then((dbUserData) => {
-                return User.findOneAndUpdate(
-                    { username: body.userName },
-                    { $push: { friends: body } },
-                    //{ $push: { thoughts: dbThoughtData._id } },
-                    { new: true }
-                );
+    createNewFriend({ params, body }, res) {
+        User.findOneAndUpdate(
+            { _id: params.userId },
+            { $push: { friends: body } },
+            { new: true, runValidators: true }
+        )
+            .then(dbThoughtData => {
+                if (!dbThoughtData) {
+                    res.status(404).json({ message: 'No user found with this id!' });
+                    return;
+                }
+                res.json(dbUserData);
             })
-            .then((dbThoughtData) => res.json(dbThoughtData))
-            .catch((err) => res.json(err));
+            .catch(err => res.json(err));
     },
 
     deleteFriend({ params }, res) {
